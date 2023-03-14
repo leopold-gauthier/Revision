@@ -4,18 +4,24 @@ require_once("./Include/config.php");
 require_once("./Include/navigation.php");
 
 ?>
-<br><a href="articles.php?order=DESC">DESC</a> || <a href="articles.php?order=ASC">ASC</a>
-<?php
 
-if (isset($_GET['order']) == 'DESC') {
-    $request = $bdd->prepare("SELECT article, utilisateurs.firstname FROM articles INNER JOIN utilisateurs ON articles.id_utilisateur = utilisateurs.id ORDER BY articles.article DESC");
-} elseif (isset($_GET['order']) == 'ASC') {
-    $request = $bdd->prepare("SELECT article, utilisateurs.firstname FROM articles INNER JOIN utilisateurs ON articles.id_utilisateur = utilisateurs.id ORDER BY articles.article ASC");
+<?php
+if (isset($_GET['order'])) {
+    if ($_GET['order'] == "ASC") {
+        $order = "DESC";
+    } else if ($_GET['order'] == "DESC") {
+        $order = "ASC";
+    }
+} else {
+    $order = "DESC";
 }
-var_dump($request);
+$request = $bdd->prepare("SELECT article, utilisateurs.firstname FROM articles INNER JOIN utilisateurs ON articles.id_utilisateur = utilisateurs.id ORDER BY articles.article $order ");
 $request->execute();
 $result = $request->fetchAll(PDO::FETCH_ASSOC);
-header('refresh:0');
+?>
+
+<?php
+
 foreach ($result as $key => $value) { ?>
 
     <br>
@@ -26,3 +32,6 @@ foreach ($result as $key => $value) { ?>
 <?php
 }
 ?>
+<form method="GET">
+    <input type="submit" value="<?= $order ?>" name="order">
+</form>

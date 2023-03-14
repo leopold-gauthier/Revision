@@ -19,8 +19,5 @@ if (isset($_POST['submit'])) {
     $User->connect($_POST['login'], $_POST['password']);
     header("Location: ./connexion.php");
     $user->isConnected();
-} else if (empty($_SESSION['user'])) {
-    echo "Aucun utilisateur trouvées";
 }
-var_dump($_SESSION);
 ?>

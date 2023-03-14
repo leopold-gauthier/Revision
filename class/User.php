@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 class User
 {
 
@@ -71,10 +70,49 @@ class User
     // ___________________________________ //
 
     // FUNCTION
+
+    // VERIFY
+    public function verify_password()
+    {
+        if ($_POST['password'] == $_POST['password_confirm']) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function verify_empty()
+    {
+        if (empty($_POST['login']) || empty($_POST['email']) || empty($_POST['firstname']) || empty($_POST['lastname'])) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function verify_login()
+    {
+        $login = htmlspecialchars($_POST['login']);
+        $recupUser = $this->bdd->prepare("SELECT * FROM utilisateurs WHERE login = ?");
+        $recupUser->execute([$login]);
+        if ($recupUser->rowCount() > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // ---------------------------------------------- //
+
+    // OTHER FUNCTION
     public function register()
     {
-        $register = $this->bdd->prepare("INSERT INTO `utilisateurs` (`login` , `password`, `email` , `firstname` , `lastname`) VALUES (?, ? , ?, ? ,?);");
-        $register->execute([$this->login, $this->password, $this->email, $this->firstname, $this->lastname]);
+        if ($this->verify_login() == true && $this->verify_empty() == true && $this->verify_password() == true) {
+            $register = $this->bdd->prepare("INSERT INTO `utilisateurs` (`login` , `password`, `email` , `firstname` , `lastname`) VALUES (?, ? , ?, ? ,?);");
+            $register->execute([$this->login, $this->password, $this->email, $this->firstname, $this->lastname]);
+        } else {
+            return false;
+        }
     }
 
     public function connect($login, $password)
@@ -102,6 +140,15 @@ class User
             return false;
         }
     }
+    public function Update($login, $password, $email, $firstname, $lastname)
+    {
+        if ($this->verify_empty() == true && $this->verify_password() == true) {
+            $update = $this->bdd->prepare("UPDATE `utilisateurs` SET `login` = ?, `password` = ?, `email` = ?, `firstname` = ?, `lastname` = ? WHERE `utilisateurs`.`id` = ?;");
+            $update->execute([$login, $password, $email, $firstname, $lastname, $_SESSION['user']['id']]);
+        } else {
+            return false;
+        }
+    }
 }
 
 $user = new User(NULL, NULL, NULL, NULL, NULL);
@@ -110,3 +157,4 @@ $user = new User(NULL, NULL, NULL, NULL, NULL);
 // $user->connect("DropZ", "mdp");
 // $user->disconnect();
 // $user->isConnected();
+// $user->Update('reded', 'reded', 'reded@gmail.com', 'reded', 'reded');
