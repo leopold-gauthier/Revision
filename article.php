@@ -1,4 +1,5 @@
 <?php
+include_once("./Include/head-inc.php");
 require_once("./class/User.php");
 require_once("./Include/config.php");
 require_once("./Include/navigation.php");
@@ -9,22 +10,24 @@ if (isset($_SESSION['user'])) { ?>
         <label for="article">Article: </label>
         <input type="text" name="article" id="article" required>
         <a href="./categorie"></a>
-        <input type="submit" name="submit" value="Ajouter">
-        <?php
-        $request = $bdd->prepare("SELECT * FROM categorie");
-        $request->execute();
-        $result = $request->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($result as $key => $value) {
-        ?>
+        <input class="button" type="submit" name="submit" value="Ajouter">
+        <a href="./categorie.php">Ajouter une catégorie</a>
+        <div id="categorie">
+            <?php
+            $request = $bdd->prepare("SELECT * FROM categorie");
+            $request->execute();
+            $result = $request->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($result as $key => $value) {
+            ?>
 
-            <br>
-            <input type="checkbox" id="<?= $value['nom'] ?>" value="<?= $value['id'] ?>" name="categorie[]">
-            <label for="<?= $value['nom'] ?>"><?= $value['nom'] ?></label>
-            <br>
-            <br>
-        <?php
-        }
-        ?>
+                <br>
+                <input type="checkbox" id="<?= $value['nom'] ?>" value="<?= $value['id'] ?>" name="categorie[]">
+                <label for="<?= $value['nom'] ?>"><?= $value['nom'] ?></label>
+                <br>
+            <?php
+            }
+            ?>
+        </div>
     </form>
 <?php
 } else {

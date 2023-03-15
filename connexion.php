@@ -1,4 +1,5 @@
 <?php
+include_once("./Include/head-inc.php");
 require_once("./class/User.php");
 require_once("./Include/navigation.php")
 ?>
@@ -9,7 +10,7 @@ require_once("./Include/navigation.php")
     <label for="password">Password: </label>
     <input type="password" name="password" id="password" required>
 
-    <input type="submit" name="submit" value="S'inscrire">
+    <input class="button" type="submit" name="submit" value="S'inscrire">
 </form>
 
 
