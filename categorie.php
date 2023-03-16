@@ -19,6 +19,6 @@ if (isset($_SESSION['user'])) { ?>
 <?php
 if (isset($_POST['submit'])) {
     $request = $bdd->prepare("INSERT INTO categorie (nom, id_utilisateur) VALUES (?,?)");
-    $request->execute([$_POST['categorie'], $_SESSION['user']['id']]);
+    $request->execute([$_POST['categorie'], $_SESSION['user']->id]);
     header("Location: ./article.php");
 }

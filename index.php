@@ -3,6 +3,7 @@ include_once("./Include/head-inc.php");
 require_once("./class/User.php");
 require_once("./Include/config.php");
 require_once("./Include/navigation.php");
+var_dump($_SESSION);
 if (!isset($_SESSION['user'])) { ?>
     <p>Hello</p>
 <?php

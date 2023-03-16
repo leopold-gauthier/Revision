@@ -37,10 +37,10 @@ if (isset($_SESSION['user'])) { ?>
 <?php
 if (isset($_POST['submit'])) {
     $request = $bdd->prepare("INSERT INTO articles (article, id_utilisateur) VALUES (?,?)");
-    $request->execute([$_POST['article'], $_SESSION['user']['id']]);
+    $request->execute([$_POST['article'], $_SESSION['user']->id]);
 
     $selectId = $bdd->prepare("SELECT id FROM articles WHERE id_utilisateur = ? ORDER BY id DESC ");
-    $selectId->execute([$_SESSION['user']['id']]);
+    $selectId->execute([$_SESSION['user']->id]);
     $result = $selectId->fetch(PDO::FETCH_ASSOC);
 
     if (isset($_POST['categorie'])) {
