@@ -1,26 +1,27 @@
 <?php
+require_once("./Include/config.php");
+// require_once("../Include/config.php");
+
 session_start();
 
 class User
 {
-
-
+    public $id;
     public $login;
     public $password;
     public $email;
     public $firstname;
     public $lastname;
-    public $bdd;
 
     // CONSTRUCTOR
-    public function __construct($login, $password, $email, $firstname, $lastname)
+    public function __construct($id, $login, $password, $email, $firstname, $lastname)
     {
+        $this->id = $id;
         $this->login = $login;
         $this->password = $password;
         $this->email = $email;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->bdd = new PDO('mysql:host=localhost;dbname=revisions', "root", '');
     }
 
     // GET
@@ -90,10 +91,10 @@ class User
         }
     }
 
-    public function verify_login()
+    public function verify_login($bdd)
     {
         $login = htmlspecialchars($_POST['login']);
-        $recupUser = $this->bdd->prepare("SELECT * FROM utilisateurs WHERE login = ?");
+        $recupUser = $bdd->prepare("SELECT * FROM utilisateurs WHERE login = ?");
         $recupUser->execute([$login]);
         if ($recupUser->rowCount() > 0) {
             return false;
@@ -105,23 +106,30 @@ class User
     // ---------------------------------------------- //
 
     // OTHER FUNCTION
-    public function register()
+    public function register($bdd)
     {
-        if ($this->verify_login() == true && $this->verify_empty() == true && $this->verify_password() == true) {
-            $register = $this->bdd->prepare("INSERT INTO `utilisateurs` (`login` , `password`, `email` , `firstname` , `lastname`) VALUES (?, ? , ?, ? ,?);");
+        if ($this->verify_login($bdd) == true && $this->verify_empty() == true && $this->verify_password() == true) {
+            $register = $bdd->prepare("INSERT INTO `utilisateurs` (`login` , `password`, `email` , `firstname` , `lastname`) VALUES (?, ? , ?, ? ,?);");
             $register->execute([$this->login, $this->password, $this->email, $this->firstname, $this->lastname]);
         } else {
             return false;
         }
     }
 
-    public function connect($login, $password)
+    public function connect($bdd)
     {
-        $connect = $this->bdd->prepare("SELECT * FROM utilisateurs WHERE login = ? AND password = ? ");
-        $connect->execute([$login, $password]);
+        $connect = $bdd->prepare("SELECT * FROM utilisateurs WHERE login = ? AND password = ? ");
+        $connect->execute([$this->login, $this->password]);
         $result = $connect->fetch(PDO::FETCH_ASSOC);
-        $_SESSION['user'] = $result;
-        var_dump($_SESSION);
+        if ($result != false) {
+            $this->id = $result['id'];
+            $this->login = $result['login'];
+            $this->password = $result['password'];
+            $this->email = $result['email'];
+            $this->firstname = $result['firstname'];
+            $this->lastname = $result['lastname'];
+            $_SESSION['user'] = $this;
+        }
     }
 
     public function disconnect()
@@ -140,18 +148,18 @@ class User
             return false;
         }
     }
-    public function Update($login, $password, $email, $firstname, $lastname)
+    public function Update($bdd)
     {
-        if ($this->verify_empty() == true && $this->verify_password() == true) {
-            $update = $this->bdd->prepare("UPDATE `utilisateurs` SET `login` = ?, `password` = ?, `email` = ?, `firstname` = ?, `lastname` = ? WHERE `utilisateurs`.`id` = ?;");
-            $update->execute([$login, $password, $email, $firstname, $lastname, $_SESSION['user']['id']]);
+        if ($this->verify_empty($bdd) == true && $this->verify_password($bdd) == true) {
+            $update = $bdd->prepare("UPDATE utilisateurs SET login = ?, password = ?, email = ?, firstname = ?, lastname = ? WHERE utilisateurs.id = ? ");
+            $update->execute([$this->login, $this->password, $this->email, $this->firstname, $this->lastname, $this->id]);
         } else {
             return false;
         }
     }
 }
 
-$user = new User(NULL, NULL, NULL, NULL, NULL);
+// $user = new User("test", "test1", "test2", "test3", "test4");
 // var_dump($user);
 // $user->register();
 // $user->connect("DropZ", "mdp");

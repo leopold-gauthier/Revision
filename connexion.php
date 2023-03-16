@@ -2,6 +2,7 @@
 include_once("./Include/head-inc.php");
 require_once("./class/User.php");
 require_once("./Include/navigation.php")
+
 ?>
 <form action="" method="post">
     <label for="name">Login: </label>
@@ -16,8 +17,8 @@ require_once("./Include/navigation.php")
 
 <?php
 if (isset($_POST['submit'])) {
-    $User = new User($_POST["login"], $_POST["password"], NULL, NULL, NULL);
-    $User->connect($_POST['login'], $_POST['password']);
+    $User = new User("", $_POST["login"], $_POST["password"], "", "", "");
+    $User->connect($bdd);
     header("Location: ./connexion.php");
     $user->isConnected();
 }

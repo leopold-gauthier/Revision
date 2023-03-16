@@ -30,7 +30,7 @@ require_once("./Include/navigation.php")
 
 
 if (isset($_POST['submit'])) {
-    $user = new User($_POST["login"], $_POST["password"], $_POST["email"], $_POST["firstname"], $_POST["lastname"]);
-    $user->register();
+    $user = new User(NULL, $_POST["login"], $_POST["password"], $_POST["email"], $_POST["firstname"], $_POST["lastname"]);
+    $user->register($bdd);
     header('Location: ./inscription.php');
 }
